@@ -111,16 +111,23 @@ function karmaBrowserifast() {
     function preprocessor(config) {
         var bc = config.browserify || {};
         bc.files = bc.files || [];
+        bc.extensions = bc.extensions || [];
         bc.transform = bc.transform || [];
 
         return function (content, path, done) {
             log.info(formatPaths("Paths to browserify", bc.files));
             var files = fileDescriptors(bc.files, config.basePath);
             var paths = files.map(function (f) { return f.pattern; });
-            var bundle = browserify({ entries: paths });
+
+            var bundle = browserify({
+                entries: paths,
+                extensions: bc.extensions
+            });
+
             bc.transform.forEach(function(t) {
                 bundle.transform(t);
             });
+
             watch.files(files);
             watch.bundle(bundle);
 
