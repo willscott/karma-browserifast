@@ -10,7 +10,8 @@ buster.testCase("karma-browserifast", {
     setUp: function () {
         this.log = {
             info: this.spy(),
-            debug: this.spy()
+            debug: this.spy(),
+            error: this.spy()
         };
 
         this.logger = { create: this.stub().returns(this.log) };
@@ -74,21 +75,37 @@ buster.testCase("karma-browserifast", {
 
     "preprocessor": {
         setUp: function () {
-            this.config = {
-                basePath: path.dirname(__filename),
-                files: [],
-                browserify: {
-                    files: ["*-fixture.js"]
-                }
-            };
-            this.plugin.framework(this.config, this.logger);
+            this.preprocess = function(files, callback) {
+                var config = {
+                    basePath: path.dirname(__filename),
+                    files: [],
+                    browserify: {
+                        files:files
+                    }
+                };
+                this.plugin.framework(config, this.logger);
+                var preprocessor = this.plugin.preprocessor(config);
+                preprocessor("", "/tmp/blabla.browserify", callback);
+            }
         },
 
         "browserifies bundle": function (done) {
-            var preprocessor = this.plugin.preprocessor(this.config);
-
-            preprocessor("", "/tmp/blabla.browserify", done(function (content) {
+            this.preprocess(["karma-browserifast-fixture.js"], done(function (content) {
                 assert.match(content, "browserifastication");
+            }));
+        },
+
+        "signals karma when errors occur": function (done) {
+            this.preprocess(["karma-browserifast-error-fixture.js"], done(function (err, content) {
+                assert.isObject(err);
+                assert.isNull(content);
+            }));
+        },
+
+        "logs errors that occur": function (done) {
+            var log= this.log;
+            this.preprocess(["karma-browserifast-error-fixture.js"], done(function () {
+              assert.called(log.error);
             }));
         }
     }

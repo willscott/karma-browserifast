@@ -135,6 +135,11 @@ function karmaBrowserifast() {
             var start = new Date();
 
             bundle.bundle({ debug: bc.debug }, function (err, content) {
+                if (err) {
+                    log.error("Error while bundling!");
+                    log.error(err);
+                    return done(err, null);
+                }
                 log.info("Browserified in", (new Date() - start) + "ms,", Math.floor(content.length / 1024) + "kB");
                 done(content);
             });
