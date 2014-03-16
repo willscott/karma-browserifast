@@ -2,9 +2,10 @@ var fs = require("fs");
 var glob = require("glob");
 var path = require("path");
 var os = require("os");
-var browserify = require("browserify");
+var browserify = require("watchify");
 var watcher = require("./lib/watcher");
 var crypto = require("crypto");
+
 
 function hash(str) {
     return crypto.createHash("sha1").update(str).digest("hex");
@@ -108,18 +109,20 @@ function karmaBrowserifast() {
         });
     }
 
+    var bundle;
+
     function preprocessor(config) {
         var bc = config.browserify || {};
         bc.files = bc.files || [];
         bc.extensions = bc.extensions || [];
         bc.transform = bc.transform || [];
 
-        return function (content, path, done) {
-            log.info(formatPaths("Paths to browserify", bc.files));
-            var files = fileDescriptors(bc.files, config.basePath);
-            var paths = files.map(function (f) { return f.pattern; });
+        log.info(formatPaths("Paths to browserify", bc.files));
+        var files = fileDescriptors(bc.files, config.basePath);
+        var paths = files.map(function (f) { return f.pattern; });
 
-            var bundle = browserify({
+        if(!bundle) {
+            bundle = browserify({
                 entries: paths,
                 extensions: bc.extensions
             });
@@ -127,10 +130,11 @@ function karmaBrowserifast() {
             bc.transform.forEach(function(t) {
                 bundle.transform(t);
             });
-
             watch.files(files);
             watch.bundle(bundle);
+        }
 
+        return function (content, path, done) {
             log.debug("Browserify bundle");
             var start = new Date();
 

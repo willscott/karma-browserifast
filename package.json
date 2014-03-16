@@ -21,7 +21,7 @@
     "main": "./index.js",
     "license": "BSD",
     "dependencies": {
-        "browserify": "~3.24",
+        "watchify": "~0.6",
         "glob": "~3.2",
         "chokidar": "~0.8"
     },
