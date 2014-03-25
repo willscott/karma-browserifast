@@ -95,6 +95,17 @@ buster.testCase("karma-browserifast", {
             }));
         },
 
+        "browserifies bundle from file descriptor": function (done) {
+            this.preprocess([{
+                pattern: "karma-browserifast-fixture.js",
+                watched: true,
+                included: true,
+                served: true
+            }], done(function (content) {
+                assert.match(content, "browserifastication");
+            }));
+        },
+
         "signals karma when errors occur": function (done) {
             this.preprocess(["karma-browserifast-error-fixture.js"], done(function (err, content) {
                 assert.isObject(err);

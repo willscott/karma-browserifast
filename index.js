@@ -16,13 +16,12 @@ function hash(str) {
  * have to manually ensure that all files are represented using Karma's object
  * describing a collection of files.
  */
-function fileConfig(pattern, basePath) {
-    if (typeof pattern === "object") { return pattern; }
+function fileConfig(file, basePath) {
     return {
-        pattern: path.resolve(basePath, pattern),
-        served: true,
-        included: false,
-        watched: true
+        pattern: path.resolve(basePath, file.pattern || file),
+        served: file.served || true,
+        included: file.included || false,
+        watched: file.watched || true
     };
 }
 
@@ -97,7 +96,8 @@ function karmaBrowserifast() {
             autoWatch: config.autoWatch,
             log: log
         }, writeBundleFile);
-        watch.directories(config.browserify && config.browserify.files || []);
+        var files = config.browserify && config.browserify.files || [];
+        watch.directories(files.map(function (f) { return f.pattern || f; }));
 
         var tmpFile = writeBundleFile();
 
