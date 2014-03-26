@@ -20,6 +20,11 @@
     },
     "main": "./index.js",
     "license": "BSD",
+    "repository": {
+      "type": "git",
+      "url": "git@github.com:cjohansen/karma-browserifast.git"
+    },
+    "bugs": "https://github.com/cjohansen/karma-browserifast/issues",
     "dependencies": {
         "watchify": "~0.6",
         "glob": "~3.2",
