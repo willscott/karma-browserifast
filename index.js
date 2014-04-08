@@ -32,7 +32,7 @@ function fileConfig(file, basePath) {
 function expandGlob(file) {
     return glob.sync(file.pattern).map(function (filePath) {
         return {
-            pattern: filePath,
+            pattern: filePath.replace(/\//g, '\\'),
             served: file.served,
             included: file.included,
             watched: file.watched
