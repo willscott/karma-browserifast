@@ -5,7 +5,7 @@
         "karma-plugin",
         "browserify"
     ],
-    "version": "0.4.2",
+    "version": "0.4.3",
     "authors": [{
         "name": "Jostein Holje",
         "email": "jostein.holje@gmail.com",
