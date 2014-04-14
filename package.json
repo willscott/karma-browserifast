@@ -28,7 +28,8 @@
     "dependencies": {
         "watchify": "~0.6",
         "glob": "~3.2",
-        "chokidar": "~0.8"
+        "chokidar": "~0.8",
+        "convert-source-map": "~0.3.3"
     },
     "devDependencies": {
         "buster-node": "~0.7"

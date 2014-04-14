@@ -5,7 +5,7 @@ var os = require("os");
 var browserify = require("watchify");
 var watcher = require("./lib/watcher");
 var crypto = require("crypto");
-
+var convert = require('convert-source-map');
 
 function hash(str) {
     return crypto.createHash("sha1").update(str).digest("hex");
@@ -134,7 +134,7 @@ function karmaBrowserifast() {
             watch.bundle(bundle);
         }
 
-        return function (content, path, done) {
+        return function (content, file, done) {
             log.debug("Browserify bundle");
             var start = new Date();
 
@@ -144,6 +144,12 @@ function karmaBrowserifast() {
                     log.error(err);
                     return done(err, null);
                 }
+
+                if(bc.debug) {
+                    var map = convert.fromSource(content);
+                    file.sourceMap = map.sourcemap;
+                }
+
                 log.info("Browserified in", (new Date() - start) + "ms,", Math.floor(content.length / 1024) + "kB");
                 done(content);
             });
