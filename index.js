@@ -124,7 +124,8 @@ function karmaBrowserifast() {
         if(!bundle) {
             bundle = browserify({
                 entries: paths,
-                extensions: bc.extensions
+                extensions: bc.extensions,
+                resolve: bc.resolve
             });
 
             bc.transform.forEach(function(t) {
