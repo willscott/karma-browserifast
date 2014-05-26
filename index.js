@@ -129,7 +129,10 @@ function karmaBrowserifast() {
             });
 
             bc.transform.forEach(function(t) {
-                bundle.transform(t);
+                if (!Array.isArray(t)) {
+                    t = [t];
+                }
+                bundle.transform.apply(bundle, t);
             });
             watch.files(files);
             watch.bundle(bundle);
