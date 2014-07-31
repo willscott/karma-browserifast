@@ -117,7 +117,7 @@ function karmaBrowserifast() {
         bc.extensions = bc.extensions || [];
         bc.transform = bc.transform || [];
 
-        log.info(formatPaths("Paths to browserify", bc.files));
+        log.info(formatPaths("Paths to browserify", bc.files.map(function (f) { return f.pattern || f; })));
         var files = fileDescriptors(bc.files, config.basePath);
         var paths = files.map(function (f) { return f.pattern; });
 
