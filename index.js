@@ -122,11 +122,15 @@ function karmaBrowserifast() {
         var paths = files.map(function (f) { return f.pattern; });
 
         if(!bundle) {
-            bundle = browserify({
-                entries: paths,
-                extensions: bc.extensions,
-                resolve: bc.resolve
-            });
+            var options = {
+              entries: paths,
+              extensions: bc.extensions,
+              resolve: bc.resolve
+            };
+            if (bc.paths) {
+              options.paths = bc.paths
+            }
+            bundle = browserify(options);
 
             bc.transform.forEach(function(t) {
                 if (!Array.isArray(t)) {
