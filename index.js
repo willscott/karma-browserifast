@@ -116,6 +116,7 @@ function karmaBrowserifast() {
         bc.files = bc.files || [];
         bc.extensions = bc.extensions || [];
         bc.transform = bc.transform || [];
+        bc.require = bc.require || {};
 
         log.info(formatPaths("Paths to browserify", bc.files.map(function (f) { return f.pattern || f; })));
         var files = fileDescriptors(bc.files, config.basePath);
@@ -128,9 +129,14 @@ function karmaBrowserifast() {
               resolve: bc.resolve
             };
             if (bc.paths) {
-              options.paths = bc.paths
+              options.paths = bc.paths;
             }
             bundle = browserify(options);
+
+            for (var exposeName in bc.require) {
+              var requirePath = path.resolve(config.basePath, bc.require[exposeName]);
+              bundle.require(requirePath, {expose: exposeName});
+            }
 
             bc.transform.forEach(function(t) {
                 if (!Array.isArray(t)) {
