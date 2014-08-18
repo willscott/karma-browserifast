@@ -6,6 +6,7 @@ var browserify = require("browserify");
 var watcher = require("./lib/watcher");
 var crypto = require("crypto");
 var convert = require('convert-source-map');
+var mkdirp = require('mkdirp');
 
 function hash(str) {
     return crypto.createHash("sha1").update(str).digest("hex");
@@ -71,8 +72,17 @@ function karmaBrowserifast() {
      * to the token bundle on disk. Karma will pick up the change and trigger a
      * new test run.
      */
-    function writeBundleFile() {
-        var tmpFile = path.join(os.tmpdir(), hash(process.cwd()) + ".browserify");
+    function writeBundleFile(config) {
+        // See if there config.browserify.tmpDir is specified.
+        // If it isn't, fall back to OS tmpDir.
+        var tmpDir;
+        if (config.browserify.tmpDir) {
+            tmpDir = path.join(config.basePath, config.browserify.tmpDir);
+            mkdirp.sync(tmpDir);
+        } else {
+            tmpDir = os.tmpdir()
+        }
+        var tmpFile = path.join(tmpDir, hash(process.cwd()) + ".browserify");
         log.debug("Write browserify bundle placeholder file", tmpFile);
         fs.writeFileSync(tmpFile, "/*" + new Date().getTime() + "*/");
         return tmpFile;
@@ -95,11 +105,13 @@ function karmaBrowserifast() {
         watch = watcher.create({
             autoWatch: config.autoWatch,
             log: log
-        }, writeBundleFile);
+        }, function() {
+            return writeBundleFile(config);
+        });
         var files = config.browserify && config.browserify.files || [];
         watch.directories(files.map(function (f) { return f.pattern || f; }));
 
-        var tmpFile = writeBundleFile();
+        var tmpFile = writeBundleFile(config);
 
         config.files.push({
             pattern: tmpFile,
