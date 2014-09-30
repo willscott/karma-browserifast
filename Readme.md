@@ -100,6 +100,22 @@ browserify: {
 
 Adds sourcemaps to your Browserify bundle.
 
+```js
+browserify: {
+    transform: ['coffeeify']
+}
+```
+
+Runs Browserify transforms on the bundle.
+
+```js
+browserify: {
+    ignore: ['ws']
+}
+```
+
+Specifies files to be ignored in the bundle.
+
 ## File watching
 
 When you move files from Karma's list of files to the browserify list, you also

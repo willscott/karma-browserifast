@@ -127,6 +127,7 @@ function karmaBrowserifast() {
         var bc = config.browserify || {};
         bc.files = bc.files || [];
         bc.extensions = bc.extensions || [];
+        bc.ignore = bc.ignore || [];
         bc.transform = bc.transform || [];
         bc.require = bc.require || {};
 
@@ -148,6 +149,9 @@ function karmaBrowserifast() {
             for (var exposeName in bc.require) {
               var requirePath = path.resolve(config.basePath, bc.require[exposeName]);
               bundle.require(requirePath, {expose: exposeName});
+            }
+            bc.ignore.forEach(function(i) {
+              bundle.ignore(i);
             }
 
             bc.transform.forEach(function(t) {
